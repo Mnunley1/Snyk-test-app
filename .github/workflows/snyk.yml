@@ -27,7 +27,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-          args: --severity-threshold=low
+          args: --severity-threshold=low --json-file-output=snyk-results.json
 
       - name: Monitor project with Snyk
         uses: snyk/actions/node@master
@@ -36,6 +36,16 @@ jobs:
         with:
           command: monitor
           args: --severity-threshold=low
+
+      - name: Check if Snyk results exist
+        run: |
+          if [ -f snyk-results.json ]; then
+            echo "Snyk results file exists"
+          else
+            echo "Snyk results file not found"
+            touch snyk-results.json
+            echo "{}" > snyk-results.json
+          fi
 
       - name: Upload Snyk scan results
         uses: actions/upload-artifact@v4
