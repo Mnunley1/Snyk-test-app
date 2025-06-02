@@ -322,3 +322,42 @@ function findUser(auth) {
   );
 }
 ///////////////////////////////////////////////////////////////////////////////
+
+exports.chat = {
+  get(req, res) {
+    res.send(messages);
+  },
+  add(req, res) {
+    const user = findUser(req.body.auth || {});
+
+    if (!user) {
+      res.status(403).send({ ok: false, error: "Access denied" });
+      return;
+    }
+
+    const message = {
+      // Default message icon. Cen be overwritten by user.
+      icon: "👋",
+    };
+
+    _.merge(message, req.body.message, {
+      id: lastId++,
+      timestamp: Date.now(),
+      userName: user.name,
+    });
+
+    messages.push(message);
+    res.send({ ok: true });
+  },
+  delete(req, res) {
+    const user = findUser(req.body.auth || {});
+
+    if (!user || !user.canDelete) {
+      res.status(403).send({ ok: false, error: "Access denied" });
+      return;
+    }
+
+    messages = messages.filter((m) => m.id !== req.body.messageId);
+    res.send({ ok: true });
+  },
+};
