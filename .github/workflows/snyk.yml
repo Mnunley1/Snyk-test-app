@@ -27,7 +27,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-          args: --severity-threshold=high
+          args: --severity-threshold=medium
 
       - name: Monitor project with Snyk
         uses: snyk/actions/node@v3
@@ -35,7 +35,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
-          args: --severity-threshold=high
+          args: --severity-threshold=low
 
       - name: Upload Snyk scan results
         uses: actions/upload-artifact@v4
